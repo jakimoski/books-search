@@ -40,12 +40,8 @@ function App() {
   useEffect(() => {
     const getData = async () => {
       try {
-        const jsonData = await fetch(
-          "https://jakimoski.github.io/books-search/data/books.json?"
-        ).then((res) => res.json());
-        const csvData = await fetch(
-          "https://jakimoski.github.io/books-search/data/books.csv"
-        ).then((res) => res.text());
+        const jsonData = await fetch("/books.json").then((res) => res.json());
+        const csvData = await fetch("/books.csv").then((res) => res.text());
 
         setCsvData(Papa.parse(csvData, { header: true }).data as []);
         setData(jsonData);
