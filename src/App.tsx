@@ -22,10 +22,8 @@ function App() {
 
   const fetchBooksData = useCallback(async () => {
     try {
-      const [jsonData, csvData] = await Promise.all([
-        fetch("data/books.json").then((res) => res.json()),
-        fetch("data/books.csv").then((res) => res.text()),
-      ]);
+      const jsonData = await fetch("data/books.json").then((res) => res.json());
+      const csvData = await fetch("data/books.csv").then((res) => res.text());
 
       const parsedCsvData = Papa.parse(csvData, { header: true })
         .data as CsvBook[];
@@ -74,8 +72,6 @@ function App() {
   useEffect(() => {
     updateBooks();
   }, [searchTerm, updateBooks]);
-
-  console.log("render times");
 
   return (
     <div className="App">
