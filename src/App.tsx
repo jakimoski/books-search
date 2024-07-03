@@ -41,10 +41,10 @@ function App() {
     const getData = async () => {
       try {
         const jsonData = await fetch(
-          "http://localhost:5173/src/data/books.json?"
+          "https://jakimoski.github.io/books-search/src/data/books.json?"
         ).then((res) => res.json());
         const csvData = await fetch(
-          "http://localhost:5173/src/data/books.csv"
+          "https://jakimoski.github.io/books-search/src/data/books.csv"
         ).then((res) => res.text());
 
         setCsvData(Papa.parse(csvData, { header: true }).data as []);
