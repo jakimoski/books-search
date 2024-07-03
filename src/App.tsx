@@ -40,13 +40,19 @@ function App() {
   useEffect(() => {
     const getData = async () => {
       try {
-        const jsonData = await fetch("/books.json").then((res) => res.json());
+        const jsonData = await fetch("/books.json")
+          .then((res) => res.json())
+          .then((data) => {
+            return data;
+          });
         const csvData = await fetch("/books.csv").then((res) => res.text());
+
+        console.log(csvData, jsonData);
 
         setCsvData(Papa.parse(csvData, { header: true }).data as []);
         setData(jsonData);
       } catch (error) {
-        console.error(error);
+        console.error("Error fetching data", error);
       }
     };
 
