@@ -1,71 +1,68 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Papa from "papaparse";
 import "./App.css";
 import "./main.scss";
-import { CsvBook } from "./types/types";
+import { Book, CsvBook } from "./types/types";
 import { mergeData } from "./utils/helpers";
-
-const string = "Hello, world it me hell!";
-
-type Book = {
-  id: number;
-  title: string;
-  author: string;
-  year: number;
-};
+import BooksList from "./components/BooksList/BooksList";
+import SearchInput from "./components/SearchInput/SearchInput";
 
 function App() {
-  const [data, setData] = useState<Book[]>([]);
-  const [csvData, setCsvData] = useState<CsvBook[]>([]);
+  const [jsonBooks, setJsonBooks] = useState<Book[]>([]);
+  const [csvBooks, setCsvBooks] = useState<CsvBook[]>([]);
+  const [books, setBooks] = useState<CsvBook[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [searchTerm, setSearchTerm] = useState<string>("");
 
-  const getHighlightedText = (text: string, highlight: string) => {
-    const regex = new RegExp(`(${highlight})`, "gi");
-    const parts = text.split(regex);
-
-    if (parts.length === 1) {
-      return text;
-    }
-
-    return parts.map((part, index) =>
-      regex.test(part) ? (
-        <span key={index} style={{ fontWeight: "bold", color: "red" }}>
-          {part}
-        </span>
-      ) : (
-        part
-      )
-    );
-  };
+  const updateBooks = useCallback(
+    (term: string) => {
+      const books = mergeData(jsonBooks, csvBooks);
+      const currentBooks = books.filter(
+        (book) =>
+          book.title.toLowerCase().includes(term.toLowerCase()) ||
+          book.author.toLowerCase().includes(term.toLowerCase()) ||
+          book.genre.toLowerCase().includes(term.toLowerCase())
+      );
+      setBooks(currentBooks);
+    },
+    [jsonBooks, csvBooks]
+  );
 
   useEffect(() => {
     const getData = async () => {
       try {
-        const jsonData = await fetch("/books.json")
-          .then((res) => res.json())
-          .then((data) => {
-            return data;
-          });
-        const csvData = await fetch("/books.csv").then((res) => res.text());
+        const jsonData = await fetch("data/books.json").then((res) =>
+          res.json()
+        );
+        const csvData = await fetch("data/books.csv").then((res) => res.text());
 
-        console.log(csvData, jsonData);
+        setCsvBooks(Papa.parse(csvData, { header: true }).data as CsvBook[]);
+        setJsonBooks(jsonData);
 
-        setCsvData(Papa.parse(csvData, { header: true }).data as []);
-        setData(jsonData);
+        setBooks(
+          mergeData(
+            jsonData,
+            Papa.parse(csvData, { header: true }).data as CsvBook[]
+          )
+        );
       } catch (error) {
         console.error("Error fetching data", error);
+      } finally {
+        setLoading(false);
       }
     };
 
     getData();
   }, []);
 
-  const mergedData = mergeData(data, csvData);
-
-  console.log(mergedData);
+  useEffect(() => {
+    updateBooks(searchTerm);
+  }, [searchTerm, updateBooks]);
 
   return (
     <div className="App">
-      <p>{getHighlightedText(string, "wo")}</p>
+      <SearchInput setTerm={setSearchTerm} />
+      <BooksList books={books} loading={loading} term={searchTerm} />
     </div>
   );
 }

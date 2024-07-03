@@ -2,12 +2,12 @@ export type Book = {
   id: number;
   title: string;
   author: string;
-  year: number;
+  genre: string;
 };
 
 export type CsvBook = {
   id: string;
   title: string;
   author: string;
-  year: number;
+  genre: string;
 };
