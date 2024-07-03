@@ -1,3 +1,4 @@
+// Spinner
 .loader {
   display: block;
   width: 84px;
@@ -6,22 +7,81 @@
   border-radius: 50%;
   position: relative;
   animation: rotate 1s linear infinite;
+
+  &::after,
+  &::before {
+    content: "";
+    box-sizing: border-box;
+    position: absolute;
+    inset: 0px;
+    border-radius: 50%;
+    border: 5px solid #fff;
+    animation: prixClipFix 2s linear infinite;
+  }
+
+  &::after {
+    inset: 8px;
+    transform: rotate3d(90, 90, 0, 180deg);
+    border-color: #ff3d00;
+  }
 }
-.loader::before,
-.loader::after {
-  content: "";
-  box-sizing: border-box;
-  position: absolute;
-  inset: 0px;
-  border-radius: 50%;
-  border: 5px solid #fff;
-  animation: prixClipFix 2s linear infinite;
+
+// Dropdown
+
+.dropdown {
+  z-index: 9;
+  text-align: center;
+  position: relative;
+  margin-block: 1rem;
+  text-align: center;
+
+  &__toggle {
+    padding: 8px 20px;
+    color: #000000;
+    border-radius: 20px;
+    font-size: 15px;
+    background-color: gray;
+    backdrop-filter: blur(0px);
+    -webkit-backdrop-filter: blur(0px);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    width: 230px;
+    white-space: nowrap;
+    cursor: pointer;
+  }
+
+  &__menu {
+    position: absolute;
+    border-radius: 20px;
+    top: 110%;
+    left: 0;
+    padding: 0;
+    color: #000000;
+    font-size: 15px;
+    background-color: gray;
+    list-style: none;
+    margin: 0;
+    width: 230px;
+    overflow: hidden;
+    text-align: left;
+    box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.1);
+    z-index: 9;
+
+    &__item {
+      padding: 8px 25px;
+      transition: all 0.3s ease-in-out;
+      cursor: pointer;
+      z-index: 9;
+      position: relative;
+      &:hover {
+        background-color: darken(gray, 10%);
+      }
+    }
+  }
 }
-.loader::after {
-  inset: 8px;
-  transform: rotate3d(90, 90, 0, 180deg);
-  border-color: #ff3d00;
-}
+
+// Animations
 
 @keyframes rotate {
   0% {

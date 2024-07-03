@@ -29,7 +29,7 @@ function BooksList({
   loading: boolean;
 }) {
   return (
-    <div>
+    <section>
       {loading && <div className="loader"></div>}
       {books.length > 0 ? (
         <table>
@@ -54,7 +54,7 @@ function BooksList({
       ) : (
         !loading && <div>No books found</div>
       )}
-    </div>
+    </section>
   );
 }
 

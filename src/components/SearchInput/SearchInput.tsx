@@ -12,7 +12,7 @@ function SearchInput({ setTerm }: Props) {
     setTerm(searchTerm);
   };
   return (
-    <div>
+    <section>
       <form onSubmit={handleSubmit}>
         <input
           name="search"
@@ -23,7 +23,7 @@ function SearchInput({ setTerm }: Props) {
         />
         <button type="submit">Search</button>
       </form>
-    </div>
+    </section>
   );
 }
 

@@ -3,9 +3,15 @@ import Papa from "papaparse";
 import "./App.css";
 import "./main.scss";
 import { Book, CsvBook } from "./types/types";
-import { mergeData } from "./utils/helpers";
+import {
+  mergeData,
+  sortBooksByAuthor,
+  sortBooksByGenre,
+  sortBooksByTitle,
+} from "./utils/helpers";
 import BooksList from "./components/BooksList/BooksList";
 import SearchInput from "./components/SearchInput/SearchInput";
+import Dropdown from "./components/Dropdown/Dropdown";
 
 function App() {
   const [jsonBooks, setJsonBooks] = useState<Book[]>([]);
@@ -14,54 +20,70 @@ function App() {
   const [loading, setLoading] = useState<boolean>(true);
   const [searchTerm, setSearchTerm] = useState<string>("");
 
-  const updateBooks = useCallback(
-    (term: string) => {
-      const books = mergeData(jsonBooks, csvBooks);
-      const currentBooks = books.filter(
-        (book) =>
-          book.title.toLowerCase().includes(term.toLowerCase()) ||
-          book.author.toLowerCase().includes(term.toLowerCase()) ||
-          book.genre.toLowerCase().includes(term.toLowerCase())
-      );
-      setBooks(currentBooks);
-    },
-    [jsonBooks, csvBooks]
-  );
+  const fetchBooksData = useCallback(async () => {
+    try {
+      const [jsonData, csvData] = await Promise.all([
+        fetch("data/books.json").then((res) => res.json()),
+        fetch("data/books.csv").then((res) => res.text()),
+      ]);
 
-  useEffect(() => {
-    const getData = async () => {
-      try {
-        const jsonData = await fetch("data/books.json").then((res) =>
-          res.json()
-        );
-        const csvData = await fetch("data/books.csv").then((res) => res.text());
+      const parsedCsvData = Papa.parse(csvData, { header: true })
+        .data as CsvBook[];
 
-        setCsvBooks(Papa.parse(csvData, { header: true }).data as CsvBook[]);
-        setJsonBooks(jsonData);
+      setJsonBooks(jsonData);
+      setCsvBooks(parsedCsvData);
+      setBooks(mergeData(jsonData, parsedCsvData));
+    } catch (error) {
+      console.error("Error fetching data", error);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
-        setBooks(
-          mergeData(
-            jsonData,
-            Papa.parse(csvData, { header: true }).data as CsvBook[]
-          )
-        );
-      } catch (error) {
-        console.error("Error fetching data", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const updateBooks = useCallback(() => {
+    const mergedBooks = mergeData(jsonBooks, csvBooks);
+    const filteredBooks = mergedBooks.filter(
+      (book) =>
+        book.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        book.author.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        book.genre.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setBooks(filteredBooks);
+  }, [jsonBooks, csvBooks, searchTerm]);
 
-    getData();
+  const handleChange = useCallback((option: string) => {
+    switch (option) {
+      case "author":
+        setBooks((prevBooks) => sortBooksByAuthor(prevBooks));
+        break;
+      case "title":
+        setBooks((prevBooks) => sortBooksByTitle(prevBooks));
+        break;
+      case "genre":
+        setBooks((prevBooks) => sortBooksByGenre(prevBooks));
+        break;
+      default:
+        break;
+    }
   }, []);
 
   useEffect(() => {
-    updateBooks(searchTerm);
+    fetchBooksData();
+  }, [fetchBooksData]);
+
+  useEffect(() => {
+    updateBooks();
   }, [searchTerm, updateBooks]);
+
+  console.log("render times");
 
   return (
     <div className="App">
       <SearchInput setTerm={setSearchTerm} />
+      <Dropdown
+        options={["author", "title", "genre"]}
+        optionHandler={handleChange}
+      />
       <BooksList books={books} loading={loading} term={searchTerm} />
     </div>
   );
