@@ -1,8 +1,8 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useMemo } from "react";
 import Papa from "papaparse";
 import "./App.css";
 import "./main.scss";
-import { Book, CsvBook } from "./types/types";
+import { CsvBook } from "./types/types";
 import {
   mergeData,
   sortBooksByAuthor,
@@ -14,8 +14,6 @@ import SearchInput from "./components/SearchInput/SearchInput";
 import Dropdown from "./components/Dropdown/Dropdown";
 
 function App() {
-  const [jsonBooks, setJsonBooks] = useState<Book[]>([]);
-  const [csvBooks, setCsvBooks] = useState<CsvBook[]>([]);
   const [books, setBooks] = useState<CsvBook[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [searchTerm, setSearchTerm] = useState<string>("");
@@ -27,10 +25,9 @@ function App() {
 
       const parsedCsvData = Papa.parse(csvData, { header: true })
         .data as CsvBook[];
+      const mergedBooks = mergeData(jsonData, parsedCsvData);
 
-      setJsonBooks(jsonData);
-      setCsvBooks(parsedCsvData);
-      setBooks(mergeData(jsonData, parsedCsvData));
+      setBooks(mergedBooks);
     } catch (error) {
       console.error("Error fetching data", error);
     } finally {
@@ -38,40 +35,33 @@ function App() {
     }
   }, []);
 
-  const updateBooks = useCallback(() => {
-    const mergedBooks = mergeData(jsonBooks, csvBooks);
-    const filteredBooks = mergedBooks.filter(
+  const filteredBooks = useMemo(() => {
+    return books.filter(
       (book) =>
         book.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
         book.author.toLowerCase().includes(searchTerm.toLowerCase()) ||
         book.genre.toLowerCase().includes(searchTerm.toLowerCase())
     );
-    setBooks(filteredBooks);
-  }, [jsonBooks, csvBooks, searchTerm]);
+  }, [books, searchTerm]);
 
   const handleChange = useCallback((option: string) => {
-    switch (option) {
-      case "author":
-        setBooks((prevBooks) => sortBooksByAuthor(prevBooks));
-        break;
-      case "title":
-        setBooks((prevBooks) => sortBooksByTitle(prevBooks));
-        break;
-      case "genre":
-        setBooks((prevBooks) => sortBooksByGenre(prevBooks));
-        break;
-      default:
-        break;
+    if (option === "author") {
+      setBooks((prevBooks) => sortBooksByAuthor(prevBooks));
+      return;
+    }
+    if (option === "title") {
+      setBooks((prevBooks) => sortBooksByTitle(prevBooks));
+      return;
+    }
+    if (option === "genre") {
+      setBooks((prevBooks) => sortBooksByGenre(prevBooks));
+      return;
     }
   }, []);
 
   useEffect(() => {
     fetchBooksData();
   }, [fetchBooksData]);
-
-  useEffect(() => {
-    updateBooks();
-  }, [searchTerm, updateBooks]);
 
   return (
     <div className="App">
@@ -80,7 +70,7 @@ function App() {
         options={["author", "title", "genre"]}
         optionHandler={handleChange}
       />
-      <BooksList books={books} loading={loading} term={searchTerm} />
+      <BooksList books={filteredBooks} loading={loading} term={searchTerm} />
     </div>
   );
 }
