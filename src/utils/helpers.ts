@@ -1,15 +1,11 @@
 import { Book, CsvBook } from "../types/types";
 
-export const sortBooksByAuthor = (books: CsvBook[]) => {
-  return [...books].sort((a, b) => a.author.localeCompare(b.author));
-};
-
-export const sortBooksByTitle = (books: CsvBook[]) => {
-  return [...books].sort((a, b) => a.title.localeCompare(b.title));
-};
-
-export const sortBooksByGenre = (books: CsvBook[]) => {
-  return [...books].sort((a, b) => a.genre.localeCompare(b.genre));
+// Sort data by property
+export const sortBooksByProperty = (
+  books: CsvBook[],
+  property: keyof CsvBook
+) => {
+  return [...books].sort((a, b) => a[property].localeCompare(b[property]));
 };
 
 // Merge and sort data by author data from json and csv

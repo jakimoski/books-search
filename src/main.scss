@@ -2,6 +2,7 @@
 $primary-color: #00297e;
 $secondary-color: #2189d1;
 $tertiary-color: #519fd533;
+$box-shadow: 0px 3px 6px #00000029;
 
 // Global
 * {
@@ -17,6 +18,7 @@ h1 {
   font-size: clamp(2.2rem, 5vw, 3.5rem);
   font-weight: 700;
   color: $primary-color;
+  margin-block: 2.5rem;
 }
 
 .app {
@@ -26,11 +28,12 @@ h1 {
     padding-inline: 2rem;
   }
   @media (min-width: 768px) {
-    max-width: 1680px;
+    max-width: 1280px;
     margin: 0 auto;
   }
 }
 
+// Search
 .search {
   &__form {
     display: flex;
@@ -41,10 +44,10 @@ h1 {
 
   &__input {
     flex: 1;
-    padding: 0.6rem;
+    padding: 10px;
     border: 1px solid $secondary-color;
     border-radius: 5px 0 0 5px;
-    box-shadow: 0px 3px 6px #00000029;
+    box-shadow: $box-shadow;
     outline: none;
 
     @media (min-width: 480px) {
@@ -53,7 +56,7 @@ h1 {
   }
 
   &__button {
-    padding: 0.5rem 1rem;
+    padding: 8px 25px;
     font-size: 1rem;
     border: 1px solid $primary-color;
     background-color: $primary-color;
@@ -69,7 +72,7 @@ h1 {
 
     &:hover {
       background-color: $secondary-color;
-      box-shadow: 0px 3px 6px #00000029;
+      box-shadow: $box-shadow;
     }
 
     &:active {
@@ -117,7 +120,7 @@ h1 {
   }
 
   &__highlight {
-    font-weight: bold;
+    font-weight: 700;
     color: red;
   }
 
@@ -165,7 +168,7 @@ h1 {
   margin-block: 1.5rem;
   width: 230px;
   margin-left: auto;
-  box-shadow: 0px 3px 6px #00000029;
+  box-shadow: $box-shadow;
   border-radius: 5px;
 
   &__toggle {
@@ -178,7 +181,7 @@ h1 {
     width: 100%;
     white-space: nowrap;
     cursor: pointer;
-    outline: none;
+
     transition: all 0.3s ease-in-out;
 
     &:hover {
@@ -200,7 +203,7 @@ h1 {
     margin: 0;
     width: 100%;
     overflow: hidden;
-    box-shadow: 0px 3px 6px #00000029;
+    box-shadow: $box-shadow;
 
     &__item {
       padding: 10px 20px;
@@ -218,15 +221,6 @@ h1 {
 }
 
 // Animations
-
-@keyframes rotate {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
 
 @keyframes rotateSpinner {
   0% {

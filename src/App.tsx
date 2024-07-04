@@ -3,12 +3,7 @@ import Papa from "papaparse";
 import "./App.css";
 import "./main.scss";
 import { CsvBook } from "./types/types";
-import {
-  mergeData,
-  sortBooksByAuthor,
-  sortBooksByGenre,
-  sortBooksByTitle,
-} from "./utils/helpers";
+import { mergeData, sortBooksByProperty } from "./utils/helpers";
 import BooksList from "./components/BooksList/BooksList";
 import SearchInput from "./components/SearchInput/SearchInput";
 import Dropdown from "./components/Dropdown/Dropdown";
@@ -18,6 +13,7 @@ function App() {
   const [loading, setLoading] = useState<boolean>(true);
   const [searchTerm, setSearchTerm] = useState<string>("");
 
+  // Fetch and merge data from json and csv files
   const fetchBooksData = useCallback(async () => {
     try {
       const jsonData = await fetch("data/books.json").then((res) => res.json());
@@ -35,28 +31,27 @@ function App() {
     }
   }, []);
 
+  // Filter books by search term
   const filteredBooks = useMemo(() => {
+    if (searchTerm === "") {
+      return books;
+    }
     return books.filter(
       (book) =>
-        book.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        book.author.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        book.genre.toLowerCase().includes(searchTerm.toLowerCase())
+        book?.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        book?.author.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        book?.genre.toLowerCase().includes(searchTerm.toLowerCase())
     );
   }, [books, searchTerm]);
 
-  const handleChange = useCallback((option: string) => {
-    if (option === "author") {
-      setBooks((prevBooks) => sortBooksByAuthor(prevBooks));
+  // Sort books by property
+  const handleSortChange = useCallback((option: string) => {
+    if (option !== "author" && option !== "title" && option !== "genre") {
       return;
     }
-    if (option === "title") {
-      setBooks((prevBooks) => sortBooksByTitle(prevBooks));
-      return;
-    }
-    if (option === "genre") {
-      setBooks((prevBooks) => sortBooksByGenre(prevBooks));
-      return;
-    }
+    setBooks((prevBooks) =>
+      sortBooksByProperty(prevBooks, option as keyof CsvBook)
+    );
   }, []);
 
   useEffect(() => {
@@ -69,7 +64,7 @@ function App() {
       <SearchInput setTerm={setSearchTerm} />
       <Dropdown
         options={["author", "title", "genre"]}
-        optionHandler={handleChange}
+        optionHandler={handleSortChange}
       />
       <BooksList books={filteredBooks} loading={loading} term={searchTerm} />
     </div>
