@@ -29,29 +29,29 @@ This is a simple books search app built with React, TypeScript, and Sass.
 Clone the project
 
 ```bash
-  git clone https://github.com/jakimoski/books-search.git
+git clone https://github.com/jakimoski/books-search.git
 ```
 
 Go to the project directory
 
 ```bash
-  cd my-project
+cd my-project
 ```
 
 Install dependencies
 
 ```bash
-  npm install
+npm install
 ```
 
 Start the app locally
 
 ```bash
-  npm run dev
+npm run dev
 ```
 
 Build
 
 ```bash
-  npm run build
+npm run build
 ```
