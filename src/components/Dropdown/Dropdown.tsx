@@ -64,7 +64,9 @@ const Dropdown = ({ options, optionHandler }: DropdownProps) => {
         aria-haspopup="listbox"
         aria-expanded={isOpen}
       >
-        {selectedOption}
+        <span>
+          Sort by <span className="dropdown__option">{selectedOption}</span>
+        </span>
       </button>
 
       {isOpen && (
@@ -80,7 +82,9 @@ const Dropdown = ({ options, optionHandler }: DropdownProps) => {
               role="option"
               aria-selected={selectedOption === option}
             >
-              {option}
+              <span>
+                Sort by <span className="dropdown__option">{option}</span>
+              </span>
             </li>
           ))}
         </ul>

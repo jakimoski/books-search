@@ -64,7 +64,8 @@ function App() {
   }, [fetchBooksData]);
 
   return (
-    <div className="App">
+    <div className="app">
+      <h1>Books List</h1>
       <SearchInput setTerm={setSearchTerm} />
       <Dropdown
         options={["author", "title", "genre"]}

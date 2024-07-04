@@ -1,7 +1,7 @@
 import { CsvBook } from "../../types/types";
 
 const getHighlightedText = (text: string, highlight: string) => {
-  const regex = new RegExp(`(${highlight})`, "gi");
+  const regex = new RegExp(`(${highlight})`, "i");
   const parts = text.split(regex);
 
   if (parts.length === 1 || !highlight) {
@@ -10,7 +10,7 @@ const getHighlightedText = (text: string, highlight: string) => {
 
   return parts.map((part, index) =>
     regex.test(part) ? (
-      <span key={index} style={{ fontWeight: "bold", color: "red" }}>
+      <span key={index} className="books-list__highlight">
         {part}
       </span>
     ) : (
@@ -29,30 +29,36 @@ function BooksList({
   loading: boolean;
 }) {
   return (
-    <section>
+    <section className="books-list">
       {loading && <div className="loader"></div>}
       {books.length > 0 ? (
-        <table>
+        <table className="books-list__table">
           <thead>
-            <tr>
-              <th>Title</th>
-              <th>Author</th>
-              <th>Genre</th>
+            <tr className="books-list__header-row">
+              <th className="books-list__header-cell">Title</th>
+              <th className="books-list__header-cell">Author</th>
+              <th className="books-list__header-cell">Genre</th>
             </tr>
           </thead>
           <tbody>
             {!loading &&
               books.map((book) => (
-                <tr key={book.id}>
-                  <th scope="row">{getHighlightedText(book.title, term)}</th>
-                  <td>{getHighlightedText(book.author, term)}</td>
-                  <td>{getHighlightedText(book.genre, term)}</td>
+                <tr key={book.id} className="books-list__row">
+                  <td className="books-list__cell">
+                    {getHighlightedText(book.title, term)}
+                  </td>
+                  <td className="books-list__cell">
+                    {getHighlightedText(book.author, term)}
+                  </td>
+                  <td className="books-list__cell">
+                    {getHighlightedText(book.genre, term)}
+                  </td>
                 </tr>
               ))}
           </tbody>
         </table>
       ) : (
-        !loading && <div>No books found</div>
+        !loading && <div className="books-list__no-books">No results found</div>
       )}
     </section>
   );

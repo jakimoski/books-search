@@ -11,17 +11,21 @@ function SearchInput({ setTerm }: Props) {
     e.preventDefault();
     setTerm(searchTerm);
   };
+
   return (
-    <section>
-      <form onSubmit={handleSubmit}>
+    <section className="search">
+      <form className="search__form" onSubmit={handleSubmit}>
         <input
+          className="search__input"
           name="search"
           onChange={(e) => setSearchTerm(e.target.value)}
           value={searchTerm}
           type="text"
-          placeholder="Search by title, author, or genre..."
+          placeholder="Search..."
         />
-        <button type="submit">Search</button>
+        <button className="search__button" type="submit">
+          Search
+        </button>
       </form>
     </section>
   );
